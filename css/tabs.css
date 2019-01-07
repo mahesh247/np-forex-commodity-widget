@@ -1,0 +1,71 @@
+.ui-tabs-anchor {
+	-webkit-transition: all 0.2s ease-in-out; /* Chrome 1-25, Safari 3.2+ */
+	-moz-transition: all 0.2s ease-in-out; /* Firefox 4-15 */
+	-o-transition: all 0.2s ease-in-out; /* Opera 10.50–12.00 */
+	transition: all 0.2s ease-in-out; /* Chrome 26, Firefox 16+, IE 10+, Opera 12.10+ */
+}
+
+.ui-tabs-panel {
+	display: none;
+}
+
+.ui-tabs-panel.active-tab {
+	display: block;
+}
+
+.commodity-widget .ui-nav-collapse {
+	margin: 0;
+	margin-bottom: 21px;
+}
+
+.commodity-widget .ui-nav-collapse,
+.commodity-widget .ui-tabs-anchor {
+	display: block;
+	font-size: 20px;
+	font-size: 1.25rem;
+	font-weight: 500;
+	text-transform: capitalize;
+	outline: 0;
+}
+.commodity-widget .tabs-nav {
+	display: block;
+	margin-bottom: 35px;
+}
+
+.commodity-widget .ui-tabs-nav {
+	margin: 0;
+	padding: 0;
+	text-align: center;
+}
+
+.commodity-widget .ui-tabs-nav li {
+	list-style: none;
+	width: 50%;
+	float: left;
+}
+
+.commodity-widget .ui-tabs-anchor {
+	display: block;
+	padding: 5px 10px;
+}
+
+.commodity-widget .ui-nav-collapse {
+	display: none;
+}
+
+.commodity-widget .ui-tabs-tab {
+    border-bottom: 1px solid #ccc;
+}
+.commodity-widget .ui-tabs-tab.ui-state-active {
+    border: 1px solid #ccc;
+    border-bottom: none;
+    border-radius: 4px 4px 0px 0px;
+}
+
+.commodity-widget.tabs table {
+	border-top: none;
+}
+
+.commodity-widget table tr:first-child {
+	border-right: 1px solid #ccc;
+}

@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name:  NP Forex Commodity Widget
+Plugin Name:  NP Forex Commodity Widget 1
 Plugin URI:   https://wordpress.org/plugins/np-forex-commodity-widget/
 Description:  NP Forex Commodity Widget is a simple and light weight plugin to that to add up a widget that shows current commodity prices and exchange rates.
-Version:      1.1
+Version:      1.2
 Author:       maheshmaharjan, tikarambhandari, pratikshrestha
 Author URI:   https://mahesh-maharjan.com.np
 License:      GPL2
@@ -40,12 +40,12 @@ class NFCW_Commodity_Widget extends WP_Widget {
      */
     function enqueue_scripts() {
         // Enqueue scripts goes here
-        wp_enqueue_script( 'nfcw-script', plugin_dir_url( __FILE__ ) . 'assets/js/script.js', array( 'jquery' ), '1.0', false );
+        wp_enqueue_script( 'nfcw-script', plugin_dir_url( __FILE__ ) . 'js/script.js', array( 'jquery' ), '1.0', false );
     }
 
     function enqueue_styles() {
         // Enqueue styles goes here
-        wp_enqueue_style( 'nfcw-css', plugin_dir_url( __FILE__ ) . 'assets/css/tabs.css', array(), '1.0', 'all' );
+        wp_enqueue_style( 'nfcw-css', plugin_dir_url( __FILE__ ) . 'css/tabs.css', array(), '1.0', 'all' );
     }
 
     public $args = array(
@@ -56,14 +56,14 @@ class NFCW_Commodity_Widget extends WP_Widget {
     );
  
     public function widget( $args, $instance ) {
-        if ( false === ( $json = get_transient( 'json' ) ) ) {
+        if ( false === ( $json = get_transient( 'commodity_json' ) ) ) {
             // It wasn't there, so regenerate the data and save the transient
             $url      = 'https://mahesh-maharjan.com.np/npfc/commodity-json';
             $get      = wp_remote_get( $url );
             $response = wp_remote_retrieve_body( $get );
             $json     = array_reverse( json_decode( $response, true ) );
             if( ! empty( $json ) ) {
-                set_transient( 'json', $json, 24*60*60 );
+                set_transient( 'commodity_json', $json, 1*60*60 );
             } 
         }
  
@@ -91,9 +91,9 @@ class NFCW_Commodity_Widget extends WP_Widget {
         else {
             echo 'Failed to retrieve data';
         }
-       
+        
         echo '</div>';
-        echo '<span>Source: Federation of Nepal Gold & Silver Dealer\'s Association</span>';
+        echo '<span class="source">Source: <a href="//fenegosida.org" target="_blank">Federation of Nepal Gold & Silver Dealer\'s Association</a></span>';
  
         echo $args['after_widget'];
  
@@ -128,7 +128,7 @@ class NFCW_Commodity_Widget extends WP_Widget {
     }
  
     public function update( $new_instance, $old_instance ) {
-        delete_transient( 'json' );
+        delete_transient( 'commodity_json' );
         $instance = array();
  
         $instance['title'] = ( !empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
@@ -209,3 +209,4 @@ class NFCW_Commodity_Widget extends WP_Widget {
 $commodity_widget = new NFCW_Commodity_Widget();
 
 include_once( 'nfcw-ex-rates.php' );
+include_once( 'nfcw-oil-price.php' );

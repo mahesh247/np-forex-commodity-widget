@@ -24,14 +24,12 @@ class NFCW_ExRates_Widget extends WP_Widget {
      * @param string|bool $ver (optional) Script version (used for cache busting), set to null to disable
      * @param bool $in_footer (optional) Whether to enqueue the script before </head> or before </body>
      */
-    function enqueue_scripts() {
+    function forex_enqueue_scripts() {
         //wp_register_script( $handle, $src, $deps = array, $ver = false, $in_footer = false )
-        wp_register_script( 'commodity-widget-js', plugin_dir_url( __FILE__ ) . 'script.js', array( 'jquery', 'jquery-ui-tabs' ), '1.0.1', true );
-        wp_enqueue_script( 'commodity-widget-js' );
     }
 
     function forex_enqueue_styles() {
-        wp_enqueue_style( 'forex-flag-css', plugin_dir_url( __FILE__ ) . 'assets/css/flag-icon.min.css', array(), '1.0', 'all' );
+        wp_enqueue_style( 'forex-flag-css', plugin_dir_url( __FILE__ ) . 'css/flag-icon.min.css', array(), '1.0', 'all' );
     }
 
 
@@ -51,7 +49,7 @@ class NFCW_ExRates_Widget extends WP_Widget {
             $response = wp_remote_retrieve_body( $get );
             $rates    = json_decode( $response, true );
             if( ! empty( $rates ) ) {
-                set_transient( 'rates', $rates, 24*60*60 );
+                set_transient( 'rates', $rates, 1*60*60 );
             }
         }
         	
@@ -81,7 +79,7 @@ class NFCW_ExRates_Widget extends WP_Widget {
                     echo '<td>' . $rate['TargetSell'] . '</td></tr>';
                 }
             echo '</table>';
-            echo '<span>Source: Nepal Rastra Bank</span>';
+            echo '<span class="source">Source: <a href="//nrb.org.np" target="_blank">Nepal Rastra Bank</a></span>';
             echo $args['after_widget'];
         }
         else {

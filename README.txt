@@ -2,9 +2,9 @@
 
 Contributors: maheshmaharjan, tikarambhandari, pratikshrestha
 Donate link: https://mahesh-maharjan.com.np/plugins/np-forex-commodity-widget/
-Tags: commodity, forex, widget, exchange, rates, price
+Tags: commodity, forex, widget, oil, exchange, rates, price
 Requires at least: 4.5
-Tested up to: 4.9
+Tested up to: 5.0
 Stable tag: trunk
 License: GNU General Public License, version 2 (GPL2)
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -23,6 +23,7 @@ NP Forex Commodity Widget is a simple and light weight plugin that adds up a wid
 
 * JSON data of daily commodity price - https://mahesh-maharjan.com.np/npfc/commodity-json that is returned from fenegosida.org
 * JSON data of daily exchange rates - https://mahesh-maharjan.com.np/npfc/forex-json
+* JSON data of oil price - https://mahesh-maharjan.com.np/npfc/oil-json
 * JSON data service provider - Terms of use https://mahesh-maharjan.com.np/npfc/terms-of-use
 
 = Disclaimer =
@@ -55,6 +56,12 @@ Not so easy way (via FTP) :
 2. NFCW Exchange Rates Widget
 
 == Changelog ==
+
+= 1.2 (Unreleased) =
+* Added: Oil Price Widget
+
+= 1.1.1 (Released: May 18 2018)
+* Bug Fixed: CSS and JS missing
 
 = 1.1 (Released: May 16 2018)
 * Updated Widget design

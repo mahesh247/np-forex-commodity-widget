@@ -1,2 +1,2 @@
 # np-forex-commodity-widget
-A Wordpress Plugin for Forex, Commodiy and other data.
+A Wordpress Plugin for Forex, Commodiy, Fuel Price and other data.

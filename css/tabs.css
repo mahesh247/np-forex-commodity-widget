@@ -69,3 +69,19 @@
 .commodity-widget table tr:first-child {
 	border-right: 1px solid #ccc;
 }
+
+.dashicons-leftright {
+	color: #0AF;
+}
+
+.dashicons-arrow-down {
+	color: #F90544FF;
+}
+
+.dashicons-arrow-up {
+	color: #00FF35FF;
+}
+
+.center {
+	text-align: center;
+}

@@ -46,10 +46,11 @@ class NFCW_Oil_Widget extends WP_Widget {
     public function widget( $args, $instance ) {
         if ( false === ( $json = get_transient( 'oil_json' ) ) ) {
             // It wasn't there, so regenerate the data and save the transient
-            $url      = 'https://mahesh-maharjan.com.np/npfc/oil-json';
+            $url      = API_URL . 'oil-json';
             $get      = wp_remote_get( $url );
             $response = wp_remote_retrieve_body( $get );
-            $json     = array_reverse( json_decode( $response, true ) );
+            $json     = json_decode( $response, true );
+
             if( ! empty( $json ) ) {
                 set_transient( 'oil_json', $json, 1*60*60 );
             } 
@@ -60,11 +61,45 @@ class NFCW_Oil_Widget extends WP_Widget {
         if ( ! empty( $instance['title'] ) ) {
             echo $args['before_title'] . apply_filters( 'widget_title', $instance['title'] ) . $args['after_title'];
         }
- 
+
         echo '<div class="oil-widget">';
         if( ! empty ( $json ) ) {
-            echo '<p>As of ' . $json[0]['date'] . '</p>';
-            echo $json[0]['text'];
+            echo '<p>As of ' . date( 'M d, Y', strtotime( $json['modified'] ) ) . '</p>';
+            echo '<table>';
+                echo '<tbody>';
+                    echo '<tr>';
+                        echo '<th>Name</th>';
+                        echo '<th>Quantity</th>';
+                        echo '<th colspan="2">Price</th>';
+                    echo '</tr>';
+                $i = 1;
+                foreach( $json['data']['fuel'] as $fuel ){
+                    $icon = '';
+                    if( $fuel['change'] > 0 ) {
+                        $icon = '<i class="dashicons dashicons-arrow-up"></i>';
+                    } elseif ( $fuel['change'] < 0 ) {
+                        $icon = '<i class="dashicons dashicons-arrow-down"></i>';
+                    } else {
+                        $icon = '<i class="dashicons dashicons-leftright"></i>';
+                    }
+                    echo "<tr>";
+                        echo "<td>{$fuel['name']}</td>";
+                        echo "<td>{$fuel['quantity']}</td>";
+                        if( 6 == $i ) {
+                            echo "<td>$ {$fuel['price']} (USD)</td>";
+                            echo "<td>{$icon}</td>";
+                        } else {
+                            echo "<td>Rs {$fuel['price']}/-</td>";
+                            echo "<td>{$icon}</td>";
+                        }
+                    echo "</tr>";
+                    $i++;
+                }
+                echo '</tbody>';
+            echo '</table>';
+            echo "{$json['data']['location']}</br>";
+            echo "{$json['data']['revised']}</br>";
+            echo "Last Checked on: {$json['date']}</br></br>";
         }
         else {
             echo 'Failed to retrieve data';
@@ -79,7 +114,7 @@ class NFCW_Oil_Widget extends WP_Widget {
  
     public function form( $instance ) {
  
-        $title = ! empty( $instance['title'] ) ? $instance['title'] : esc_html__( 'NFCW Oil Price', 'nfcw-widget' );
+        $title = ! empty( $instance['title'] ) ? $instance['title'] : esc_html__( 'NFCW: Oil Price', 'nfcw-widget' );
         ?>
         <p>
             <label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_attr_e( 'Title:', 'nfcw-widget' ); ?></label>

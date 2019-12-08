@@ -1,16 +1,4 @@
 <?php
-/*
-Plugin Name:  NP Forex Commodity Widget 1
-Plugin URI:   https://wordpress.org/plugins/np-forex-commodity-widget/
-Description:  NP Forex Commodity Widget is a simple and light weight plugin to that to add up a widget that shows current commodity prices and exchange rates.
-Version:      1.2
-Author:       maheshmaharjan, tikarambhandari, pratikshrestha
-Author URI:   https://mahesh-maharjan.com.np
-License:      GPL2
-License URI:  http://www.gnu.org/licenses/gpl-2.0.html
-Text Domain:  nfcw-widget
-Domain Path:  /languages
-*/
 
 class NFCW_Commodity_Widget extends WP_Widget {
  
@@ -45,6 +33,7 @@ class NFCW_Commodity_Widget extends WP_Widget {
 
     function enqueue_styles() {
         // Enqueue styles goes here
+        wp_enqueue_style( 'dashicons' );
         wp_enqueue_style( 'nfcw-css', plugin_dir_url( __FILE__ ) . 'css/tabs.css', array(), '1.0', 'all' );
     }
 
@@ -58,10 +47,10 @@ class NFCW_Commodity_Widget extends WP_Widget {
     public function widget( $args, $instance ) {
         if ( false === ( $json = get_transient( 'commodity_json' ) ) ) {
             // It wasn't there, so regenerate the data and save the transient
-            $url      = 'https://mahesh-maharjan.com.np/npfc/commodity-json';
+            $url      = API_URL . 'commodity-json';
             $get      = wp_remote_get( $url );
             $response = wp_remote_retrieve_body( $get );
-            $json     = array_reverse( json_decode( $response, true ) );
+            $json     = json_decode( $response, true );
             if( ! empty( $json ) ) {
                 set_transient( 'commodity_json', $json, 1*60*60 );
             } 
@@ -75,23 +64,31 @@ class NFCW_Commodity_Widget extends WP_Widget {
  
         echo '<div class="commodity-widget ' . $instance['layout'] . '">';
         if( ! empty ( $json ) ) {
-            echo '<p>As of ' . $json[0]['date'] . '</p>';
+            $utc_date = DateTime::createFromFormat(
+                            'Y-m-d G:i', 
+                            $json['modified'], 
+                            new DateTimeZone('UTC')
+            );
+
+            echo '<p>As of ' . $json['date'] . '</p>';
 
             if( ! isset( $instance['layout'] ) ) {
                 $instance['layout'] = 'tabs';
             }
 
+            $json['data'] = array_reverse($json['data']);
+
             if( 'tabs' == $instance['layout'] ) {
-                self::tabs_display($json);
+                self::tabs_display($json['data']);
             }
             else {
-                self::table_display($json);
+                self::table_display($json['data']);
             }
         }
         else {
             echo 'Failed to retrieve data';
         }
-        
+       
         echo '</div>';
         echo '<span class="source">Source: <a href="//fenegosida.org" target="_blank">Federation of Nepal Gold & Silver Dealer\'s Association</a></span>';
  
@@ -101,7 +98,7 @@ class NFCW_Commodity_Widget extends WP_Widget {
  
     public function form( $instance ) {
  
-        $title = ! empty( $instance['title'] ) ? $instance['title'] : esc_html__( 'NFCW Commodity Price', 'nfcw-widget' );
+        $title = ! empty( $instance['title'] ) ? $instance['title'] : esc_html__( 'NFCW: Commodity Price', 'nfcw-widget' );
         ?>
         <p>
             <label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_attr_e( 'Title:', 'nfcw-widget' ); ?></label>
@@ -138,75 +135,90 @@ class NFCW_Commodity_Widget extends WP_Widget {
     }
 
     public function table_display($json) {
-        echo '<table class="nfcw-commodity-price widefat fixed" cellspacing="0">';
+        foreach($json as $key => $value):
+            if( 'source' == $key ) {
+                continue;
+            }
+            echo '<h2 class="center">' . ucfirst( str_replace( '_', ' ', $key ) ) . '</h2>' ;
+            echo '<table class="nfcw-commodity-price widefat fixed" cellspacing="0">';
             echo '<tr><th>Name</th>';
             echo '<th>Price</th>';
-            echo '<th>Measure</th></tr>';
-            foreach($json as $commodity){
+            echo '<th>Change</th></tr>';
+            foreach($value as $commodity){
+                $icon = '';
+                if( $commodity['change'] > 0 ) {
+                    $icon = '<i class="dashicons dashicons-arrow-up"></i>';
+                } elseif ( $commodity['change'] < 0 ) {
+                    $icon = '<i class="dashicons dashicons-arrow-down"></i>';
+                } else {
+                    $icon = '<i class="dashicons dashicons-leftright"></i>';
+                }
                 echo '<tr><td>' . $commodity['name'] . '</td>';
                 echo '<td>' . $commodity['price'] . '/-</td>';
-                echo '<td>' . $commodity['measure'] . '</td></tr>';
+                echo '<td>'. $icon . '(' . $commodity['change'] . ')</td>';
             }
             echo '</table>';
+        endforeach;
     }
 
     public function tabs_display($json) {
         $i = $j = 1;
-        foreach($json as $k=>$data) {
-            $commodity[$data['measure']][] = array(
-                'name'  => $data['name'],
-                'price' => $data['price']
-            );
-        } 
-        $commodity = array_reverse($commodity);
         ?>
 
         <div id="tabs" class="tabs">
             <div class="tabs-nav">
                 <ul class="ui-tabs-nav">
-                    <?php foreach($commodity as $measure=> $value):
+                    <?php foreach($json as $key => $value):
                     $active = '';
-                    if($i == 1){
+                    if($key == 'per 1 tola'){
                        $active = 'ui-state-active'; 
                     }
                     ?>
-                    <li class="ui-tabs-tab <?php echo $active; ?>"><a href="#tab-<?php echo $i; ?>" class="ui-tabs-anchor"><?php echo $measure; ?></a></li>
+                    <?php if( $key != 'source'): ?>
+                        <li class="ui-tabs-tab <?php echo $active; ?>"><a href="#tab-<?php echo $i; ?>" class="ui-tabs-anchor"><?php echo str_replace( '_', ' ', $key ) ; ?></a></li>
+                    <?php endif; ?>
                     <?php $i++; endforeach; ?>
                 </ul>
             </div><!-- .tabs-nav -->
-            <?php foreach($commodity as $measure=> $value): 
-                $active = '';
-                if($j == 1){
-                   $active = 'active-tab'; 
-                }
-            ?>
-                <div class="ui-tabs-panel-wrap">
-                    <div id="tab-<?php echo $j; ?>" class="ui-tabs-panel <?php echo $active; ?>">
-                    <table class="nfcw-commodity-price widefat fixed">
-                    <tr>
-                        <th><?php echo 'Name'; ?></th>
-                        <th><?php echo 'Price'; ?></th>
-                    </tr>
-                    <?php 
-                    foreach($value as $data=> $datam ): ?>
-                        <tr>
-                            <td><?php echo 'Rs. ' . $datam['name'] ; ?></td>
-                            <td><?php echo 'Rs. ' . $datam['price'].'/-' ; ?></td>
-                        </tr>
-                    <?php
-                    endforeach;
+            <?php foreach($json as $key => $value): 
+                if( $key != 'source'):
+                    $active = '';
+                    if($key == 'per 1 tola'){
+                       $active = 'active-tab'; 
+                    }
                     ?>
-                     </table>
-                    </div><!-- #tab-1 -->
-                </div><!-- .ui-tabs-panel-wrap -->
+                        <div class="ui-tabs-panel-wrap">
+                            
+                            <div id="tab-<?php echo $j; ?>" class="ui-tabs-panel <?php echo $active; ?>">
+                                <table class="nfcw-commodity-price widefat fixed">
+                                    <tr>
+                                        <th><?php echo 'Name'; ?></th>
+                                        <th><?php echo 'Price'; ?></th>
+                                    </tr>
+                                    <?php foreach($value as $commodity): 
+                                        $icon = '';
+                                        if( $commodity['change'] > 0 ) {
+                                            $icon = '<i class="dashicons dashicons-arrow-up"></i>';
+                                        } elseif ( $commodity['change'] < 0 ) {
+                                            $icon = '<i class="dashicons dashicons-arrow-down"></i>';
+                                        } else {
+                                            $icon = '<i class="dashicons dashicons-leftright"></i>';
+                                        }
+                                    ?>
+                                    <tr>
+                                        <td><?php echo $commodity['name'] ; ?></td>
+                                        <td><?php echo $commodity['price'] . '/-' ; ?></td>
+                                        <!-- <td><?php //if( '' != $icon ) echo $icon . '(' . $commodity['change'] . ')' ; ?></td> -->
+                                    </tr>
+                                    <?php endforeach; ?>
+                                 </table>
+                            </div><!-- #tab-1 -->
+                        </div><!-- .ui-tabs-panel-wrap -->
+                <?php endif;?>
             <?php $j++; endforeach; ?>
         </div>
         <?php 
     }
- 
 }
 
 $commodity_widget = new NFCW_Commodity_Widget();
-
-include_once( 'nfcw-ex-rates.php' );
-include_once( 'nfcw-oil-price.php' );

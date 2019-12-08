@@ -44,7 +44,7 @@ class NFCW_ExRates_Widget extends WP_Widget {
     public function widget( $args, $instance ) {
         if ( false === ( $rates = get_transient( 'rates' ) ) ) {
             // It wasn't there, so regenerate the data and save the transient
-            $url      = 'https://mahesh-maharjan.com.np/npfc/forex-json';
+            $url      = API_URL . 'forex-json';
             $get      = wp_remote_get( $url );
             $response = wp_remote_retrieve_body( $get );
             $rates    = json_decode( $response, true );
@@ -60,23 +60,38 @@ class NFCW_ExRates_Widget extends WP_Widget {
         }
 
         if( ! empty( $rates ) ) {
-            echo '<div><h5>Nepal Exchange Rates</h5> <span>As of ' . $rates[0]['Date'] . '</span></div>';
+            echo '<div><span>As of ' . $rates['date'] . '</span></div>';
             echo '<table class="nfcw-exrates widefat fixed" cellspacing="0">';
                 echo '<tr><th>Currency</th>';
                 echo '<th>Unit</th>';
-                echo '<th>Buying</th>';
-                echo '<th>Selling</th></tr>';
-                foreach( $rates as $rate ) {
-                    if ( '' == $rate['TargetBuy'] && 'CNY' == $rate['BaseCurrency'] ){
-                        $rate['TargetBuy'] = '16.48';
+                echo '<th colspan="2">Buying</th>';
+                echo '<th colspan="2">Selling</th></tr>';
+
+                foreach(  $rates['data'] as $rate ) {
+                    $icon_selling = '';
+                    if( isset( $rate['selling_change'] ) && $rate['selling_change'] > 0 ) {
+                        $icon_selling = '<i class="dashicons dashicons-arrow-up"></i>';
+                    } elseif ( isset( $rate['selling_change'] ) && $rate['selling_change'] < 0 ) {
+                        $icon_selling = '<i class="dashicons dashicons-arrow-down"></i>';
+                    } else {
+                        $icon_selling = '<i class="dashicons dashicons-leftright"></i>';
                     }
-                    $flag = $rate['CountryFlag'];
-                    $flag = explode(' ', $flag);
-                    $flag = $flag[2];
-                    echo '<tr><td><span class="flag-icon flag-icon-' . $flag . '"></span> ' . $rate['BaseCurrency'] . '</td>';
-                    echo '<td>' . $rate['BaseValue'] . '</td>';
-                    echo '<td>' . $rate['TargetBuy'] . '</td>';
-                    echo '<td>' . $rate['TargetSell'] . '</td></tr>';
+
+                    $icon_buying = '';
+                    if( isset( $rate['buying_change'] ) && $rate['buying_change'] > 0 ) {
+                        $icon_buying = '<i class="dashicons dashicons-arrow-up"></i>';
+                    } elseif ( isset( $rate['buying_change'] ) && $rate['buying_change'] < 0 ) {
+                        $icon_buying = '<i class="dashicons dashicons-arrow-down"></i>';
+                    } else {
+                        $icon_buying = '<i class="dashicons dashicons-leftright"></i>';
+                    }
+                    
+                    echo '<tr><td><span class="flag-icon flag-icon-' . $rate['flag'] . '"></span> ' . $rate['currency'] . '</td>';
+                    echo '<td>' . $rate['base'] . '</td>';
+                    echo '<td>' . $rate['buying'] . '</td>';
+                    echo '<td>' . $icon_buying . '</td>';
+                    echo '<td>' . $rate['selling'] . '</td>';
+                    echo '<td>' . $icon_selling . '</td></tr>';
                 }
             echo '</table>';
             echo '<span class="source">Source: <a href="//nrb.org.np" target="_blank">Nepal Rastra Bank</a></span>';
@@ -90,7 +105,7 @@ class NFCW_ExRates_Widget extends WP_Widget {
  
     public function form( $instance ) {
  
-        $title = ! empty( $instance['title'] ) ? $instance['title'] : esc_html__( 'NFCW FOREX Table', 'nfcw-widget' );
+        $title = ! empty( $instance['title'] ) ? $instance['title'] : esc_html__( 'NFCW: Nepal Foreign Exchange Rates', 'nfcw-widget' );
         ?>
         <p>
             <label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_attr_e( 'Title:', 'nfcw-widget' ); ?></label>

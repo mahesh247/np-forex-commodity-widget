@@ -21,10 +21,10 @@ NP Forex Commodity Widget is a simple and light weight plugin to that to add up 
 
 = External Services used in plugin are given below =
 
-* JSON data of daily commodity price - https://mahesh-maharjan.com.np/api/v1/commodity-json that is returned from fenegosida.org
-* JSON data of daily exchange rates - https://mahesh-maharjan.com.np/api/v1/forex-json that is returned from nrb.org.np
-* JSON data of fuel rates - https://mahesh-maharjan.com.np/api/v1/oil-json that is returned from nepaloil.com.np
-* JSON data service provider - Terms of use https://mahesh-maharjan.com.np/api/v1/terms-of-use
+* JSON data of daily commodity price - https://mahesh-maharjan.com.np/npfc/public/api/commodity that is returned from fenegosida.org
+* JSON data of daily exchange rates - https://mahesh-maharjan.com.np/npfc/public/api/forex that is returned from nrb.org.np
+* JSON data of fuel rates - https://mahesh-maharjan.com.np/npfc/public/api/fuel that is returned from nepaloil.com.np
+* JSON data service provider - Terms of use https://mahesh-maharjan.com.np/npfc/public/terms-of-use
 
 = Disclaimer =
 
@@ -57,6 +57,11 @@ Not so easy way (via FTP) :
 3. NFCW Fuel Price Widget
 
 == Changelog ==
+= 1.5 (Released: February 25, 2020) =
+* Updated: API
+* Code Optimization and enhancement
+* Bug Fixes
+
 = 1.4 (Released: July 28, 2019) =
 * Added: Increase or Decrease in value and notation
 * Updated: Enhanced Design

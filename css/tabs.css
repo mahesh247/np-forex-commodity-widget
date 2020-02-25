@@ -29,7 +29,6 @@
 }
 .commodity-widget .tabs-nav {
 	display: block;
-	margin-bottom: 35px;
 }
 
 .commodity-widget .ui-tabs-nav {
@@ -84,4 +83,14 @@
 
 .center {
 	text-align: center;
+}
+
+table.nfcw-commodity-price,
+table.nfcw-exrates,
+table.nfcw-fuel-price {
+	width: 100%;
+}
+
+table.nfcw-commodity-price th{
+	width: 50%;
 }

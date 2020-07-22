@@ -3,7 +3,7 @@
 Plugin Name:  NP Forex Commodity Widget
 Plugin URI:   https://wordpress.org/plugins/np-forex-commodity-widget/
 Description:  NP Forex Commodity Widget is a simple and light weight plugin to that to add up a widget that shows current commodity prices, exchange rates and fuel rates.
-Version:      1.5
+Version:      1.6
 Author:       maheshmaharjan, tikarambhandari, pratikshrestha, skandha
 Author URI:   https://mahesh-maharjan.com.np
 License:      GPL3
@@ -44,8 +44,7 @@ class NP_Forex_Commodity {
 			define( 'NPFC_PATH', plugin_dir_path( __FILE__ ) );
 		}
 		if ( ! defined( 'NPFC_API_URL' ) ) {
-			define( 'NPFC_API_URL', 'https://mahesh-maharjan.com.np/npfc/public/api/npfc' );
-			// define( 'NPFC_API_URL', 'http://localhost:8000/api/' );
+			define( 'NPFC_API_URL', 'https://nfcw.herokuapp.com/nfcw' );
 		}
 		define( 'NPFC_FUEL_SRC_URL', '//nepaloil.com.np' );
 		define( 'NPFC_FOREX_SRC_URL', '//nrb.org.np' );

@@ -47,7 +47,7 @@ class NFCW_Commodity_Widget extends WP_Widget {
 	);
 
 	public function widget( $args, $instance ) {
-		$json = $GLOBALS['npfc_json']['commodity'];
+		$json = isset( $GLOBALS['npfc_json']['commodity'] ) ? $GLOBALS['npfc_json']['commodity'] : '';
 
 		echo $args['before_widget'];
 
@@ -73,7 +73,7 @@ class NFCW_Commodity_Widget extends WP_Widget {
 					);
 			}
 
-			if ( 'tabs' == $instance['layout'] ) {
+			if ( 'tabs' === $instance['layout'] ) {
 				self::tabs_display( $newarray );
 			} else {
 				self::table_display( $newarray );
@@ -117,7 +117,10 @@ class NFCW_Commodity_Widget extends WP_Widget {
 	}
 
 	public function update( $new_instance, $old_instance ) {
+
+		// Delete transient on update.
 		delete_transient( 'npfc_json' );
+
 		$instance = array();
 
 		$instance['title']  = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
@@ -209,7 +212,7 @@ class NFCW_Commodity_Widget extends WP_Widget {
 								<td><?php echo $commodity['price']; ?></td>
 								<td>
 								<?php
-								if ( '' != $icon ) {
+								if ( '' !== $icon ) {
 									echo $icon . '(' . $commodity['change'] . ')';}
 								?>
 								</td>

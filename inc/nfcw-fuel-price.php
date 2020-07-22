@@ -25,7 +25,7 @@ class NFCW_Fuel_Widget extends WP_Widget {
 	);
 
 	public function widget( $args, $instance ) {
-		$json = $GLOBALS['npfc_json']['fuel'];
+		$json = isset( $GLOBALS['npfc_json']['fuel'] ) ? $GLOBALS['npfc_json']['fuel'] : '';
 
 		echo $args['before_widget'];
 
@@ -97,7 +97,10 @@ class NFCW_Fuel_Widget extends WP_Widget {
 	}
 
 	public function update( $new_instance, $old_instance ) {
+
+		// Delete transient on update.
 		delete_transient( 'npfc_json' );
+
 		$instance = array();
 
 		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';

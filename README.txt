@@ -4,10 +4,10 @@ Contributors: maheshmaharjan, tikarambhandari, pratikshrestha, skandha
 Donate link: https://mahesh-maharjan.com.np/plugins/np-forex-commodity-widget/
 Tags: commodity, forex, widget, exchange, rates, price, fuel
 Requires at least: 4.5
-Tested up to: 5.3
+Tested up to: 5.4
 Stable tag: trunk
-License: GNU General Public License, version 2 (GPL2)
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
+License: GNU General Public License, version 3 (GPL3)
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
 Adds commodity prices, exchange rates and fuel rates widget.
 
@@ -57,6 +57,10 @@ Not so easy way (via FTP) :
 3. NFCW Fuel Price Widget
 
 == Changelog ==
+= 1.6 (Released: July 22, 2020) =
+* Compatability check with WordPress 5.4
+* Bug Fixed: No data error
+
 = 1.5 (Released: February 25, 2020) =
 * Updated: API
 * Code Optimization and enhancement

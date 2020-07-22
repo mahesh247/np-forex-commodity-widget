@@ -30,7 +30,7 @@ class NFCW_ExRates_Widget extends WP_Widget {
 	);
 
 	public function widget( $args, $instance ) {
-		$json = $GLOBALS['npfc_json']['forex'];
+		$json = isset( $GLOBALS['npfc_json']['forex'] ) ? $GLOBALS['npfc_json']['forex'] : '';
 
 		echo $args['before_widget'];
 
@@ -39,7 +39,7 @@ class NFCW_ExRates_Widget extends WP_Widget {
 		}
 
 		if ( ! empty( $json ) ) {
-			echo '<p>As of ' . date( 'M d, Y', strtotime( $json['date'] ) ) . '</p>';
+			echo '<p>As of ' . gmdate( 'M d, Y', strtotime( $json['date'] ) ) . '</p>';
 			echo '<table class="nfcw-exrates widefat fixed" cellspacing="0">';
 				echo '<tr><th>Currency</th>';
 				echo '<th>Unit</th>';
@@ -99,7 +99,10 @@ class NFCW_ExRates_Widget extends WP_Widget {
 	}
 
 	public function update( $new_instance, $old_instance ) {
+
+		// Delete transient on update.
 		delete_transient( 'npfc_json' );
+
 		$instance = array();
 
 		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
